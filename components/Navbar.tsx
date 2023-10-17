@@ -1,7 +1,9 @@
-import { Icons } from "@/components/Icons";
-import { getAuthSession } from "@/lib/auth";
 import Link from "next/link";
-import { buttonVariants } from "./ui/Button";
+
+import { Icons } from "@/components/Icons";
+import UserAccountNav from "@/components/UserAccountNav";
+import { buttonVariants } from "@/components/ui/Button";
+import { getAuthSession } from "@/lib/auth";
 
 export default async function Navbar() {
     const session = await getAuthSession();
@@ -15,8 +17,8 @@ export default async function Navbar() {
                     <p className="hidden text-zinc-700 text-sm font-medium md:block">ConnectU</p>
                 </Link>
 
-                {session ? (
-                    <p>You&apos;re Logged In</p>
+                {session?.user ? (
+                    <UserAccountNav user={session.user} />
                 ) : (
                     <Link href="/sign-in" className={buttonVariants()}>
                         Sign In
