@@ -1,4 +1,4 @@
-Creating posts (editor, image upload)import { z } from "zod";
+import { z } from "zod";
 
 import { getAuthSession } from "@/lib/auth";
 import axiosInstance from "@/lib/axios";
