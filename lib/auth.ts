@@ -53,11 +53,11 @@ export const authOptions: NextAuthOptions = {
 
                     const response = await axios.post("/core/register-user/", user);
 
-                    token.id = response.data.id;
-                    token.username = response.data.username;
-                    token.email = response.data.email;
-                    token.name = response.data.name;
-                    token.image = response.data.image;
+                    token.id = response?.data?.id;
+                    token.username = response?.data?.username;
+                    token.email = response?.data?.email;
+                    token.name = response?.data?.name;
+                    token.image = response?.data?.image;
 
                     return token;
                 } catch (err) {
