@@ -1,5 +1,6 @@
 "use client";
 
+import PostVoteClient from "@/components/post-vote/PostVoteClient";
 import { formatTimeToNow } from "@/lib/utils";
 import { parseISO } from "date-fns";
 import { MessageSquare } from "lucide-react";
@@ -15,13 +16,13 @@ interface PostProps {
     commentAmt: number;
 }
 
-const Post: FC<PostProps> = ({ post, votesAmt: _votesAmt, currentVote: _currentVote, subredditName, commentAmt }) => {
+const Post: FC<PostProps> = ({ post, votesAmt, currentVote, subredditName, commentAmt }) => {
     const pRef = useRef<HTMLParagraphElement>(null);
 
     return (
         <div className="rounded-md bg-white shadow">
             <div className="px-6 py-4 flex justify-between">
-                {/* <PostVoteClient postId={post.id} initialVotesAmt={_votesAmt} initialVote={_currentVote?.type} /> */}
+                <PostVoteClient postId={post?.id} initialVotesAmt={votesAmt} initialVote={currentVote?.voteType} />
 
                 <div className="w-0 flex-1">
                     <div className="max-h-40 mt-1 text-xs text-gray-500">
@@ -37,7 +38,7 @@ const Post: FC<PostProps> = ({ post, votesAmt: _votesAmt, currentVote: _currentV
                             </>
                         ) : null}
                         <span>Posted by u/{post?.authorUsername}</span>{" "}
-                        {formatTimeToNow(new Date(parseISO(post?.createdAt).getTime()))}
+                        {post?.createdAt && formatTimeToNow(new Date(parseISO(post?.createdAt).getTime()))}
                     </div>
                     <a href={`/r/${subredditName}/post/${post?.id}`}>
                         <h1 className="text-lg font-semibold py-2 leading-6 text-gray-900">{post?.title}</h1>
