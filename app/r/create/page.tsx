@@ -63,6 +63,12 @@ export default function CommunityCreatePage() {
         },
     });
 
+    const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter" && input.length > 0 && !isPending) {
+            createCommunity();
+        }
+    };
+
     return (
         <div className="container flex items-center h-full max-w-3xl mx-auto">
             <div className="relative bg-white w-full h-fit p-4 rounded-lg space-y-6">
@@ -79,7 +85,12 @@ export default function CommunityCreatePage() {
                         <p className="absolute text-sm left-0 w-8 inset-y-0 grid place-items-center text-zinc-400">
                             r/
                         </p>
-                        <Input value={input} onChange={(e) => setInput(e.target.value)} className="pl-6" />
+                        <Input
+                            value={input}
+                            onChange={(e) => setInput(e.target.value)}
+                            onKeyUp={handleKeyPress}
+                            className="pl-6"
+                        />
                     </div>
                 </div>
 
