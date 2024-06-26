@@ -32,24 +32,21 @@ const PostFeed: FC<PostFeedProps> = ({ initialPosts, subredditName }) => {
     };
 
     const { data, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
-        queryKey: ["infinite-query"],
+        queryKey: ["infinite-query", subredditName],
         queryFn: fetchPosts,
-        initialPageParam: 0,
+        initialPageParam: 1,
         initialData: { pages: [initialPosts], pageParams: [1] },
         getNextPageParam: (_lastPage, pages) => {
-            if (pages?.length) {
-                return pages?.length + 1;
-            } else {
-                return undefined;
+            if (_lastPage?.length === INFINITE_SCROLL_PAGINATION_RESULTS) {
+                return pages.length + 1;
             }
+            return undefined;
         },
     });
 
     useEffect(() => {
-        if (entry?.isIntersecting) {
-            if (hasNextPage) {
-                fetchNextPage(); // Load more posts when the last post comes into view
-            }
+        if (entry?.isIntersecting && hasNextPage) {
+            fetchNextPage();
         }
     }, [entry, fetchNextPage, hasNextPage]);
 
@@ -57,41 +54,42 @@ const PostFeed: FC<PostFeedProps> = ({ initialPosts, subredditName }) => {
 
     return (
         <ul className="flex flex-col col-span-2 space-y-6">
-            {posts.map((post, index) => {
-                const votesAmt = post?.votes.reduce((acc: any, vote: any) => {
-                    if (vote?.voteType === "UP") return acc + 1;
-                    if (vote?.voteType === "DOWN") return acc - 1;
-                    return acc;
-                }, 0);
+            {posts[0] &&
+                posts?.map((post, index) => {
+                    const votesAmt = post?.votes.reduce((acc: any, vote: any) => {
+                        if (vote?.voteType === "UP") return acc + 1;
+                        if (vote?.voteType === "DOWN") return acc - 1;
+                        return acc;
+                    }, 0);
 
-                const currentVote = post?.votes.find((vote: any) => vote.userId === session?.user.id);
+                    const currentVote = post?.votes.find((vote: any) => vote.userId === session?.user.id);
 
-                if (index === posts.length - 1) {
-                    // Add a ref to the last post in the list
-                    return (
-                        <li key={post?.id} ref={ref}>
-                            <Post
-                                post={post}
-                                commentAmt={post?.comments.length}
-                                subredditName={post?.subredditName}
-                                votesAmt={votesAmt}
-                                currentVote={currentVote}
-                            />
-                        </li>
-                    );
-                } else {
-                    return (
-                        <Post
-                            key={post?.id}
-                            post={post}
-                            commentAmt={post?.comments.length}
-                            subredditName={post?.subredditName}
-                            votesAmt={votesAmt}
-                            currentVote={currentVote}
-                        />
-                    );
-                }
-            })}
+                    if (index === posts.length - 1) {
+                        return (
+                            <li key={post?.id} ref={ref}>
+                                <Post
+                                    post={post}
+                                    commentAmt={post?.comments.length}
+                                    subredditName={post?.subredditName}
+                                    votesAmt={votesAmt}
+                                    currentVote={currentVote}
+                                />
+                            </li>
+                        );
+                    } else {
+                        return (
+                            <li key={post?.id}>
+                                <Post
+                                    post={post}
+                                    commentAmt={post?.comments.length}
+                                    subredditName={post?.subredditName}
+                                    votesAmt={votesAmt}
+                                    currentVote={currentVote}
+                                />
+                            </li>
+                        );
+                    }
+                })}
 
             {isFetchingNextPage && (
                 <li className="flex justify-center">
